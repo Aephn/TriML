@@ -1,6 +1,8 @@
 # Created by https://www.toptal.com/developers/gitignore/api/go,python,macos,linux,windows
 # Edit at https://www.toptal.com/developers/gitignore?templates=go,python,macos,linux,windows
 
+learning/
+
 ### Go ###
 # If you prefer the allow list template instead of the deny list, see community template:
 # https://github.com/github/gitignore/blob/main/community/Golang/Go.AllowList.gitignore
@@ -46,7 +48,8 @@ go.work
 .LSOverride
 
 # Icon must end with two \r
-Icon
+Icon
+
 
 # Thumbnails
 ._*
