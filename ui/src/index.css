@@ -1,0 +1,109 @@
+/* Monochromatic dark theme — slate scale + rare dark accents */
+:root {
+  /* Slate scale (main palette) */
+  --slate-950: #070a0f;
+  --slate-900: #0c1016;
+  --slate-850: #11161e;
+  --slate-800: #161d27;
+  --slate-750: #1c2430;
+  --slate-700: #242d3a;
+  --slate-600: #394556;
+  --slate-500: #64748b;
+  --slate-400: #94a3b8;
+  --slate-300: #cbd5e1;
+  --slate-200: #e2e8f0;
+  --slate-100: #f1f5f9;
+
+  /* Surfaces & borders */
+  --bg-base: var(--slate-950);
+  --bg-raised: var(--slate-900);
+  --bg-overlay: var(--slate-850);
+  --bg-hover: var(--slate-800);
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --border-default: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.12);
+
+  /* Text */
+  --text-primary: var(--slate-100);
+  --text-secondary: var(--slate-400);
+  --text-muted: var(--slate-500);
+  --text-faint: var(--slate-600);
+
+  /* Accents — darker shades, used sparingly */
+  --accent-success: #166534;
+  --accent-success-muted: rgba(22, 101, 52, 0.35);
+  --accent-warning: #854d0e;
+  --accent-warning-muted: rgba(133, 77, 14, 0.35);
+  --accent-error: #991b1b;
+  --accent-error-muted: rgba(153, 27, 27, 0.35);
+  --accent-info: #1e3a5f;
+  --accent-info-muted: rgba(30, 58, 95, 0.4);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--bg-base);
+  color: var(--text-primary);
+  font-family: 'Outfit', sans-serif;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+/* Glass / raised panels — slate only */
+.glass-panel {
+  background: var(--bg-overlay);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border-subtle);
+}
+
+.glass-card {
+  background: var(--bg-raised);
+  border: 1px solid var(--border-subtle);
+  border-radius: 16px;
+  padding: 20px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.glass-card:hover {
+  border-color: var(--border-default);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+}
+
+/* Utilities */
+.full-height { min-height: 100%; }
+.center-msg { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.5rem; }
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.4s ease-out forwards;
+}
+
+/* Staggered entrance for dashboard */
+.animate-stagger-1 { animation: fadeIn 0.5s ease-out 0.05s forwards; opacity: 0; }
+.animate-stagger-2 { animation: fadeIn 0.5s ease-out 0.12s forwards; opacity: 0; }
+.animate-stagger-3 { animation: fadeIn 0.5s ease-out 0.19s forwards; opacity: 0; }
+.animate-stagger-4 { animation: fadeIn 0.5s ease-out 0.26s forwards; opacity: 0; }
+.animate-stagger-5 { animation: fadeIn 0.5s ease-out 0.33s forwards; opacity: 0; }
+.animate-stagger-6 { animation: fadeIn 0.5s ease-out 0.4s forwards; opacity: 0; }
+.animate-stagger-7 { animation: fadeIn 0.5s ease-out 0.47s forwards; opacity: 0; }
+
+/* Data / metric display */
+.font-metric {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+}

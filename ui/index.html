@@ -1,232 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="TriML - Next Gen AI Kubernetes Triage">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="TriML - Next Gen AI Kubernetes Triage" />
     <title>TriML | Intelligent K8s Operations</title>
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              outfit: ['Outfit', 'sans-serif'],
+              mono: ['JetBrains Mono', 'ui-monospace', 'monospace'],
+            },
+            colors: {
+              slate: {
+                950: '#070a0f',
+                900: '#0c1016',
+                850: '#11161e',
+                800: '#161d27',
+                750: '#1c2430',
+                700: '#242d3a',
+              },
+            },
+          },
+        },
+      }
+    </script>
     <style>
-        /* Critical styles for loading */
-        body { background: #000; color: #fff; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; overflow: hidden; }
-        .loading-screen { position: fixed; inset: 0; background: #050510; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.5s ease; }
-        .loader-orb { width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(45deg, #00f2fe, #4facfe); filter: blur(10px); animation: pulse 1.5s infinite alternate; }
-        @keyframes pulse { from { transform: scale(1); opacity: 0.8; } to { transform: scale(1.5); opacity: 0.4; } }
-        .hidden { opacity: 0; pointer-events: none; }
+      .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+      .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.08);
+        border-radius: 3px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: rgba(255, 255, 255, 0.14);
+      }
     </style>
-    <link rel="stylesheet" href="styles.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-<body>
+  </head>
+  <body class="bg-[#070a0f]">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
 
-    <!-- Loading Screen -->
-    <div class="loading-screen" id="loadingScreen">
-        <div class="loader-orb"></div>
-        <div style="margin-top: 20px; font-family: 'Space Grotesk', sans-serif; letter-spacing: 2px; color: rgba(255,255,255,0.7);">INITIALIZING NEURAL LINK</div>
+    <!-- Monochrome ambience — slate only -->
+    <div class="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
+      <div class="absolute -top-[30%] -right-[10%] w-[50vw] h-[50vw] rounded-full bg-slate-900/60 blur-[100px]"></div>
+      <div class="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-slate-900/40 to-transparent"></div>
+      <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.12] mix-blend-overlay"></div>
     </div>
-
-    <!-- Background Ambience -->
-    <div class="ambient-bg">
-        <div class="orb orb-1"></div>
-        <div class="orb orb-2"></div>
-        <div class="orb orb-3"></div>
-        <div class="grid-overlay"></div>
-    </div>
-
-    <div class="app-glass-container">
-        <!-- Sidebar -->
-        <aside class="sidebar glass-panel">
-            <div class="brand">
-                <div class="logo-mark">
-                    <div class="inner-mark"></div>
-                </div>
-                <h1>TriML</h1>
-            </div>
-
-            <nav class="nav-menu">
-                <a href="#" class="nav-item active" data-page="dashboard">
-                    <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg></span>
-                    <span>Dashboard</span>
-                </a>
-                <a href="#" class="nav-item" data-page="clusters">
-                    <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v4l3 3"></path></svg></span>
-                    <span>Live Clusters</span>
-                </a>
-                <a href="#" class="nav-item" data-page="ai-agent">
-                    <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 1 0 0-20z"></path><path d="M9 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"></path><path d="M15 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"></path><path d="M9.5 15.5c.9 1 2.4 1.5 3.5 1.5s2.6-.5 3.5-1.5"></path></svg></span>
-                    <span>AI Triage</span>
-                </a>
-                <a href="#" class="nav-item" data-page="settings">
-                    <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.18-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.18-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.18.08a2 2 0 0 0 2.73-.73l.22-.38a2 2 0 0 0-.73-2.73l-.15-.1a2 2 0 0 1-1-1.72v-.51a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.18.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path><circle cx="12" cy="12" r="3"></circle></svg></span>
-                    <span>System</span>
-                </a>
-            </nav>
-
-            <div class="user-status glass-panel-light">
-                <div class="status-dot"></div>
-                <div class="status-text" id="connectionStatus">System Online</div>
-            </div>
-        </aside>
-
-        <!-- Main Content -->
-        <main class="main-content">
-            <header class="top-bar">
-                <div class="breadcrumbs">
-                    <span class="crumb-root">Platform</span>
-                    <span class="crumb-sep">/</span>
-                    <span class="crumb-current" id="pageTitle">Dashboard</span>
-                </div>
-                <div class="actions">
-                    <div class="search-glass">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                        <input type="text" placeholder="Search resources..." id="searchInput">
-                    </div>
-                </div>
-            </header>
-
-            <div class="content-scroll-area" id="pageContent">
-                
-                <!-- DASHBOARD PAGE -->
-                <div class="page-view" id="dashboard-page">
-                    <!-- Hero Section -->
-                    <div class="hero-glass-card">
-                        <div class="hero-content">
-                            <h2 id="pageSubtitle">Infrastructure Overview</h2>
-                            <p>Real-time telemetry and AI-driven insights for your Kubernetes clusters.</p>
-                        </div>
-                        <div class="hero-stats">
-                            <button class="glass-btn icon-btn" id="refreshBtn">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- KPI Grid -->
-                    <div class="kpi-grid">
-                        <div class="glass-card kpi">
-                            <div class="kpi-header">Active Pods</div>
-                            <div class="kpi-value" id="totalPods">0</div>
-                            <div class="kpi-chart-mini">
-                                <div class="bar" style="height: 40%"></div>
-                                <div class="bar" style="height: 60%"></div>
-                                <div class="bar" style="height: 75%"></div>
-                                <div class="bar" style="height: 50%"></div>
-                                <div class="bar active" style="height: 80%"></div>
-                            </div>
-                        </div>
-                        <div class="glass-card kpi">
-                            <div class="kpi-header">Nodes Online</div>
-                            <div class="kpi-value" id="activeNodes">0</div>
-                            <div class="kpi-trend positive">All Systems Normal</div>
-                        </div>
-                        <div class="glass-card kpi">
-                            <div class="kpi-header">CPU Load</div>
-                            <div class="kpi-value" id="cpuUsage">0%</div>
-                            <div class="progress-glass">
-                                <div class="progress-fill" style="width: 45%"></div>
-                            </div>
-                        </div>
-                        <div class="glass-card kpi">
-                            <div class="kpi-header">Memory Pressure</div>
-                            <div class="kpi-value" id="memoryUsage">0%</div>
-                            <div class="progress-glass">
-                                <div class="progress-fill warning" style="width: 72%"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Main Charts Section -->
-                    <div class="charts-section">
-                        <div class="glass-card chart-container">
-                            <div class="card-header">
-                                <h3>Telemetry</h3>
-                                <div class="tab-group-glass">
-                                    <button class="active">CPU</button>
-                                    <button>Memory</button>
-                                    <button>Network</button>
-                                </div>
-                            </div>
-                            <div class="chart-wrapper">
-                                <canvas id="resourceChart"></canvas>
-                            </div>
-                        </div>
-
-                        <div class="glass-card activity-container">
-                            <div class="card-header">
-                                <h3>Live Events</h3>
-                            </div>
-                            <div class="activity-feed" id="activityList">
-                                <!-- Populated by JS -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- AI AGENT PAGE -->
-                <div class="page-view hidden" id="ai-agent-page">
-                    <div class="ai-layout">
-                        <div class="chat-glass-panel">
-                            <div class="chat-header">
-                                <div class="ai-avatar">
-                                    <div class="ai-avatar-core"></div>
-                                </div>
-                                <div class="ai-info">
-                                    <h3>Triage Core</h3>
-                                    <span>Online | v2.4.0 Model</span>
-                                </div>
-                            </div>
-                            <div class="chat-messages-area" id="chatMessages">
-                                <div class="ai-message">
-                                    <p>Greetings. I am monitoring your cluster telemetry. How can I assist with diagnostics today?</p>
-                                </div>
-                            </div>
-                            <div class="chat-input-area">
-                                <textarea id="chatInput" placeholder="Describe the anomaly or query infrastructure..."></textarea>
-                                <button id="sendBtn" class="send-glass-btn">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <div class="ai-side-panel">
-                            <div class="glass-card suggestion-card">
-                                <h4>Suggested Queries</h4>
-                                <div class="quick-chips">
-                                    <button class="chip quick-action-btn">Analyze crash loops</button>
-                                    <button class="chip quick-action-btn">Show CPU hotspots</button>
-                                    <button class="chip quick-action-btn">List failed deployments</button>
-                                </div>
-                            </div>
-                            
-                            <div class="glass-card insight-card">
-                                <div class="insight-header">
-                                    <span class="pulse-dot warning"></span>
-                                    <h4>Active Insight</h4>
-                                </div>
-                                <p>Anomaly detected in specific pod lifecycle events within namespace 'production'.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Placeholder pages -->
-                <div class="page-view hidden" id="clusters-page">
-                    <div class="glass-card full-height center-msg">
-                        <h3>Cluster Management Module</h3>
-                        <p>Loading cluster topology...</p>
-                    </div>
-                </div>
-            </div>
-        </main>
-    </div>
-
-    <!-- Background Noise Texture -->
-    <div class="noise-overlay"></div>
-
-    <script type="module" src="script.js"></script>
-</body>
+  </body>
 </html>
